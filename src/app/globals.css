@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/*
+ * Paleta derivada do logotipo original (verde oliva #81925B, extraído do arquivo
+ * da marca) combinada com tons de farinha, creme e casca assada das fotografias.
+ */
+@theme {
+  --color-flour: #fbf8f1; /* fundo principal — farinha */
+  --color-cream: #f4ecdd; /* superfícies — creme */
+  --color-oat: #e7dac3; /* bordas e divisores — aveia */
+  --color-crust: #6b4526; /* casca assada */
+  --color-crust-deep: #3a2717; /* texto principal — marrom tostado */
+  --color-ink: #2a1d12;
+  --color-muted: #6f5d4b; /* texto secundário (AA sobre flour) */
+  --color-golden: #c08a3e; /* dourado da casca */
+  --color-olive: #81925b; /* verde do logotipo */
+  --color-olive-deep: #4f5d30; /* verde para texto/botões (AA) */
+  --color-olive-ink: #39441f;
+
+  --font-display: var(--font-fraunces), "Georgia", serif;
+  --font-sans: var(--font-manrope), "Segoe UI", system-ui, sans-serif;
+
+  --ease-bake: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-flour);
+    color: var(--color-crust-deep);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-olive);
+    color: var(--color-flour);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-olive-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@keyframes hero-fallback {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-olive-deep);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    font-variation-settings: "SOFT" 50, "opsz" 144;
+  }
+
+  /* Textura sutil de farinha — ruído SVG embutido, sem requisição extra. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.3 0 0 0 0 0.18 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Rolagem horizontal nativa com snap (celular). */
+  .snap-row {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .snap-row::-webkit-scrollbar {
+    display: none;
+  }
+  .snap-row > * {
+    scroll-snap-align: start;
+  }
+
+  /*
+   * Estado inicial do hero quando há JS e movimento permitido. Se o JS não
+   * carregar, a animação de fallback revela tudo após 2,5s.
+   */
+  .motion-ok #inicio:not(.hero-ready) [data-hero-line] {
+    transform: translateY(115%);
+    animation: hero-fallback 0.6s 2.5s forwards;
+  }
+  .motion-ok #inicio:not(.hero-ready) :is([data-hero-fade], [data-hero-float]) {
+    opacity: 0;
+    animation: hero-fallback 0.6s 2.5s forwards;
+  }
+
+  dialog::backdrop {
+    background: rgb(42 29 18 / 0.88);
+    backdrop-filter: blur(4px);
+  }
+}
